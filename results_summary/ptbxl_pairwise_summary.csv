@@ -1,0 +1,2 @@
+n_samples,n_pairs,same_pairs,different_pairs,mean_same,mean_different,delta_same_minus_different,cohen_d,permutation_p_value,mannwhitney_p_value
+7688,400000,80559,319441,0.10463358530519948,-0.011695646484622041,0.11632923178982152,0.2890674146802718,0.0001999600079984003,0.0
