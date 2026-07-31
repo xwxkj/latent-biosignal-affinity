@@ -32,3 +32,11 @@ Raw data must be obtained from the original PTB-XL, WESAD and CASE repositories.
 ## Ethical scope
 
 The analyses are group-level statistical tests of cross-person physiological similarity. They are not designed for deterministic individual-level inference of personality, compatibility or diagnosis.
+
+## Reproducing manuscript Figures 2 and 3
+
+Figures 2 and 3 are generated programmatically from the numerical outputs of
+the independence-controlled pipeline. They are not generative-AI images. Use
+`code/make_reanalysis_figures.py` after running `code/run_reanalysis.py`.
+Detailed input-to-panel provenance and commands are provided in
+`code/FIGURE_REPRODUCTION.md` and `results_summary/figure_source_manifest.csv`.

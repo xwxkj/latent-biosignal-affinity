@@ -1,0 +1,7 @@
+figure,panel,output,source_files,notes
+Figure 2,a,Figure_independent_unit_deltas,"wesad/primary_cross_subject/independent_unit_deltas.csv; three_dataset_independence_controlled_summary.csv","All 15 participant points shown; full summary statistics"
+Figure 2,b,Figure_independent_unit_deltas,"case/primary_valence_arousal_quadrant/independent_unit_deltas.csv; three_dataset_independence_controlled_summary.csv","All 30 participant points shown; full summary statistics"
+Figure 2,c,Figure_independent_unit_deltas,"ptbxl/primary_patient_independent/independent_unit_deltas.csv; three_dataset_independence_controlled_summary.csv","Fixed-seed display sample of up to 900 points; estimates use all 7,491 patients"
+Figure 3,a,Figure_robustness_and_stimulus_sensitivity,"wesad/sensitivity_latent_dimension_and_metric.csv","Latent-dimension and similarity-metric sensitivity"
+Figure 3,b,Figure_robustness_and_stimulus_sensitivity,"ptbxl/sensitivity_latent_dimension_and_metric.csv; ptbxl/sensitivity_age_sex_adjusted/summary.csv","Embedding robustness and age/sex-adjusted estimate"
+Figure 3,c,Figure_robustness_and_stimulus_sensitivity,"case/sensitivity_video_centered/summary.csv; case/leave_one_video_out.csv; three_dataset_independence_controlled_summary.csv","Primary, video-centred and leave-one-video-out analyses"
