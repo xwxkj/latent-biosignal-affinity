@@ -1,41 +1,34 @@
-# Latent Biosignal Affinity
+# Latent Biosignal Affinity — independence-controlled reanalysis (v0.2)
 
-This repository contains code and aggregate proof-of-concept results for the manuscript:
+This update replaces the original pair-level proof-of-concept inference with participant- and patient-level analyses that explicitly respect repeated measures, shared stimuli and patient identity.
 
-**Latent biosignal affinity: a framework for studying shared human states through physiological similarity**
+## Main changes
 
-## Overview
+- **WESAD:** all within-participant pairs are excluded; state labels are permuted within participant; confidence intervals use participant-level cluster bootstrap resampling.
+- **CASE:** same-participant and same-video pairs are excluded; labels are permuted within participant; video-centred and leave-one-video-out sensitivity analyses quantify stimulus dependence.
+- **PTB-XL:** one ECG is retained per patient; inference is patient-level; an age- and sex-adjusted stratified sensitivity analysis is included.
+- Pair counts are no longer treated as independent sample sizes.
 
-The project evaluates whether samples sharing the same group-level affinity label show higher similarity in a low-dimensional latent biosignal space than samples with different labels.
+## Primary results
 
-Three public datasets are used:
+| Dataset | Independent units | Mean Δ | Cluster-bootstrap 95% CI | Restricted-permutation P | Hedges g |
+|---|---:|---:|---:|---:|---:|
+| WESAD | 15 participants | 0.5636 | [0.4502, 0.6836] | 0.0002 | 4.707 |
+| CASE | 30 participants | 0.0200 | [0.0031, 0.0382] | 0.0002 | 0.782 |
+| PTB-XL | 7,491 patients | 0.1172 | [0.1109, 0.1238] | 0.0002 | 0.786 |
 
-1. **PTB-XL** — pathological affinity in 12-lead ECG.
-2. **WESAD** — stress/affective affinity in wearable physiological signals.
-3. **CASE** — psychological/affective affinity using valence-arousal annotations.
+The CASE effect is stimulus-sensitive: after video-centering, mean Δ = −0.0043, 95% CI [−0.0176, 0.0111], P = 0.1698.
 
-## Main proof-of-concept results
+## Repository organization
 
-| Dataset | Affinity type | Delta similarity | Permutation p-value |
-|---|---|---:|---:|
-| PTB-XL | Pathological affinity | 0.1163 | 2.0e-4 |
-| WESAD | Stress/affective affinity | 0.3303 | 2.0e-4 |
-| CASE | Psychological/affective affinity | 0.0225 | 2.0e-4 |
+- `code/`: independence-controlled pipeline, tests and figure scripts.
+- `results_summary/`: aggregate outputs only. Raw human biosignals and patient/participant-level rows are not redistributed.
+- `figures/`: revised overview, independent-unit distributions and robustness analyses.
 
-## Repository contents
+## Data
 
-- code/: analysis scripts and reusable functions
-- results_summary/: aggregate summaries and pairwise-test outputs
-- figures/: proof-of-concept figures
+Raw data must be obtained from the original PTB-XL, WESAD and CASE repositories. This release does not redistribute human-subject biosignals.
 
-## Data availability
+## Ethical scope
 
-This repository does not redistribute raw human-subject biosignal data. Raw datasets should be obtained from their original sources: PTB-XL from PhysioNet, WESAD from the UCI Machine Learning Repository / University of Siegen, and CASE from Scientific Data / Springer Nature Figshare.
-
-## Code availability
-
-The code reproduces the feature extraction, latent embedding, pairwise similarity analysis and permutation testing used for the proof-of-concept analyses.
-
-## Ethical note
-
-The analyses are intended for group-level statistical evaluation of latent biosignal affinity. They are not intended for deterministic individual-level inference of personality, relationship, health status, social compatibility or clinical diagnosis.
+The analyses are group-level statistical tests of cross-person physiological similarity. They are not designed for deterministic individual-level inference of personality, compatibility or diagnosis.
