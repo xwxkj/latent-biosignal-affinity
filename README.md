@@ -40,3 +40,8 @@ the independence-controlled pipeline. They are not generative-AI images. Use
 `code/make_reanalysis_figures.py` after running `code/run_reanalysis.py`.
 Detailed input-to-panel provenance and commands are provided in
 `code/FIGURE_REPRODUCTION.md` and `results_summary/figure_source_manifest.csv`.
+
+## Correction release v0.2.2
+
+The CASE analysis was recomputed at the original 1,000-Hz sampling rate with no segment-specific temporal subsampling. Corrected aggregate results, preprocessing provenance and updated figures are provided in tag `v0.2.2-case-fullrate-correction`. See `README_v0.2.2.md` and `results_summary/CASE_FULLRATE_VALIDATION.md`.
+

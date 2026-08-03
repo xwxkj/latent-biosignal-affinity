@@ -1,8 +1,14 @@
 {
   "completed": [
-    "WESAD",
-    "CASE",
-    "PTB-XL"
+    "WESAD (reused)",
+    "CASE (forced full-rate recomputation)",
+    "PTB-XL (reused)"
   ],
-  "errors": {}
+  "errors": {},
+  "case_preprocessing": {
+    "source_sampling_rate_hz": 1000.0,
+    "analysis_sampling_rate_hz": 1000.0,
+    "segment_specific_subsampling": false,
+    "cache_version": "independent_v1_case_fullrate_1000hz_v3"
+  }
 }

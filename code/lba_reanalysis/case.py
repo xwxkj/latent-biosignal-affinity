@@ -15,6 +15,10 @@ from .stats import benjamini_hochberg, compute_unit_deltas, encode_design, run_c
 PHYS_COLS = ["daqtime", "ecg", "bvp", "gsr", "rsp", "skt", "emg_zygo", "emg_coru", "emg_trap", "video"]
 ANNO_COLS = ["jstime", "valence", "arousal", "video"]
 
+CASE_SOURCE_FS_HZ = 1000.0
+CASE_ANALYSIS_FS_HZ = 1000.0
+CASE_FEATURE_VERSION = FEATURE_VERSION + "_case_fullrate_1000hz_v3"
+
 
 def _read_csv_flexible(path: Path, columns: List[str]) -> pd.DataFrame:
     frame = pd.read_csv(path)
@@ -68,19 +72,23 @@ def _quadrant(valence: float, arousal: float) -> str:
 
 
 def _segment_features(segment: pd.DataFrame) -> np.ndarray:
+    """Extract CASE features at the original common 1,000-Hz sampling rate.
+
+    No segment-specific temporal subsampling is applied. This keeps the time
+    scale of first-difference, autocorrelation, zero-crossing and spectral
+    descriptors identical across all videos.
+    """
     features = []
     for channel in ("ecg", "bvp", "gsr", "rsp", "skt", "emg_zygo", "emg_coru", "emg_trap"):
         values = segment[channel].to_numpy(dtype=float)
-        if values.size > 120000:
-            values = values[::max(1, values.size // 120000)]
-        features.append(basic_signal_features(values, fs=1000.0))
+        features.append(basic_signal_features(values, fs=CASE_ANALYSIS_FS_HZ))
     return np.concatenate(features)
 
 
 def _load_or_extract_features(data_dir: Path) -> Tuple[np.ndarray, pd.DataFrame]:
     cache_dir = ensure_dir(data_dir / "cache_independence_controlled")
-    feature_path = cache_dir / "case_features_{}.npy".format(FEATURE_VERSION)
-    meta_path = cache_dir / "case_meta_{}.csv".format(FEATURE_VERSION)
+    feature_path = cache_dir / "case_features_{}.npy".format(CASE_FEATURE_VERSION)
+    meta_path = cache_dir / "case_meta_{}.csv".format(CASE_FEATURE_VERSION)
     if feature_path.exists() and meta_path.exists():
         X = np.load(feature_path)
         meta = pd.read_csv(meta_path)
@@ -110,6 +118,10 @@ def _load_or_extract_features(data_dir: Path) -> Tuple[np.ndarray, pd.DataFrame]
                 "valence_bin": _bin(valence),
                 "arousal_bin": _bin(arousal),
                 "valence_arousal_quadrant": _quadrant(valence, arousal),
+                "original_samples": int(len(segment)),
+                "source_sampling_rate_hz": CASE_SOURCE_FS_HZ,
+                "analysis_sampling_rate_hz": CASE_ANALYSIS_FS_HZ,
+                "preprocessing_mode": "full_rate_no_subsampling",
                 "features": _segment_features(segment),
             })
     if len(rows) < 50:
@@ -148,6 +160,12 @@ def run_case_independent(
     ensure_dir(data_dir)
     ensure_dir(results_dir)
     X, meta = _load_or_extract_features(data_dir)
+    manifest_cols = [
+        "subject", "video", "original_samples", "source_sampling_rate_hz",
+        "analysis_sampling_rate_hz", "preprocessing_mode",
+    ]
+    if all(column in meta.columns for column in manifest_cols):
+        meta[manifest_cols].to_csv(results_dir / "case_preprocessing_manifest.csv", index=False)
     Z, _, pca, _ = robust_latent_embedding(X, latent_dim=latent_dim)
     subjects = meta["subject"].astype(str).to_numpy()
     videos = meta["video"].astype(str).to_numpy()
@@ -250,5 +268,9 @@ def run_case_independent(
         "video_centered_p_two_sided": centred["summary"]["permutation_p_two_sided"],
         "leave_one_video_out_min_delta": float(loo["mean_unit_delta"].min()),
         "leave_one_video_out_max_delta": float(loo["mean_unit_delta"].max()),
+        "case_source_sampling_rate_hz": CASE_SOURCE_FS_HZ,
+        "case_analysis_sampling_rate_hz": CASE_ANALYSIS_FS_HZ,
+        "case_preprocessing_mode": "full_rate_no_subsampling",
+        "case_feature_cache_version": CASE_FEATURE_VERSION,
     })
     return summary
